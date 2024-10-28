@@ -1,3 +1,7 @@
+package main;
+
+import database.DatabaseConnection;
+
 import java.sql.Connection;
 
 public class Main {

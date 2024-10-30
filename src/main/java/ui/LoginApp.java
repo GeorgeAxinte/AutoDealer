@@ -27,7 +27,7 @@ public class LoginApp extends JFrame {
         setSize(300, 200);
         setLayout(new GridBagLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        getContentPane().setBackground(new Color(255, 204, 204));
+        getContentPane().setBackground(new Color(187, 187, 187));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -65,12 +65,12 @@ public class LoginApp extends JFrame {
     }
 
     private void styleComponents() {
-        loginButton.setBackground(new Color(204, 0, 0));
-        loginButton.setForeground(Color.BLACK);
+        loginButton.setBackground(new Color(255, 78, 0));
+        loginButton.setForeground(Color.WHITE);
         loginButton.setFont(new Font("Arial", Font.BOLD, 14));
 
-        registerButton.setBackground(new Color(0, 204, 0));
-        registerButton.setForeground(Color.BLACK);
+        registerButton.setBackground(new Color(24, 166, 255));
+        registerButton.setForeground(Color.WHITE);
         registerButton.setFont(new Font("Arial", Font.BOLD, 14));
 
         usernameField.setBackground(Color.WHITE);

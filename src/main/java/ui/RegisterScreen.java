@@ -23,7 +23,7 @@ public class RegisterScreen extends JFrame {
         setSize(300, 200);
         setLayout(new GridBagLayout());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        getContentPane().setBackground(new Color(255, 204, 204));
+        getContentPane().setBackground(new Color(187, 187, 187));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -56,8 +56,8 @@ public class RegisterScreen extends JFrame {
     }
 
     private void styleComponents() {
-        registerButton.setBackground(new Color(204, 0, 0));
-        registerButton.setForeground(Color.BLACK);
+        registerButton.setBackground(new Color(255, 78, 0));
+        registerButton.setForeground(Color.WHITE);
         registerButton.setFont(new Font("Arial", Font.BOLD, 14));
 
         usernameField.setBackground(Color.WHITE);

@@ -21,10 +21,8 @@ public class DatabaseConnection {
                 String password = properties.getProperty("db.password");
                 String driver = properties.getProperty("db.driver");
 
-                // Încarcă driverul
                 Class.forName(driver);
 
-                // Crează conexiunea
                 connection = DriverManager.getConnection(url, username, password);
 
             } catch (IOException | ClassNotFoundException | SQLException e) {

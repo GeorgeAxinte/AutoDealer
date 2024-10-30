@@ -21,8 +21,8 @@ public class ErrorDialog {
         dialog.add(messageLabel, gbc);
 
         JButton okButton = new JButton("OK");
-        okButton.setBackground(new Color(204, 0, 0));
-        okButton.setForeground(Color.BLACK);
+        okButton.setBackground(new Color(191, 0, 16, 255));
+        okButton.setForeground(Color.WHITE);
         gbc.gridx = 0; gbc.gridy = 1;
         dialog.add(okButton, gbc);
 

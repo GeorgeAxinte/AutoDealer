@@ -6,23 +6,27 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import controllers.LoginController;
+import controllers.CarController;
 import utils.ErrorDialog;
 import utils.SuccesDialog;
 
-public class RegisterScreen extends JFrame {
+public class LoginApp extends JFrame {
     private JTextField usernameField;
     private JPasswordField passwordField;
+    private JButton loginButton;
     private JButton registerButton;
 
     private LoginController loginController;
+    private CarController carController;
 
-    public RegisterScreen(LoginController loginController) {
+    public LoginApp(LoginController loginController, CarController carController) {
         this.loginController = loginController;
+        this.carController = carController;
 
-        setTitle("Auto Dealer - Register");
+        setTitle("Auto Dealer - Login");
         setSize(300, 200);
         setLayout(new GridBagLayout());
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setBackground(new Color(255, 204, 204));
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -31,10 +35,12 @@ public class RegisterScreen extends JFrame {
 
         usernameField = new JTextField(15);
         passwordField = new JPasswordField(15);
+        loginButton = new JButton("Login");
         registerButton = new JButton("Register");
 
         addComponents(gbc);
         styleComponents();
+        addLoginAction();
         addRegisterAction();
     }
 
@@ -52,11 +58,18 @@ public class RegisterScreen extends JFrame {
         add(passwordField, gbc);
 
         gbc.gridx = 1; gbc.gridy = 2;
+        add(loginButton, gbc);
+
+        gbc.gridx = 1; gbc.gridy = 3;
         add(registerButton, gbc);
     }
 
     private void styleComponents() {
-        registerButton.setBackground(new Color(204, 0, 0));
+        loginButton.setBackground(new Color(204, 0, 0));
+        loginButton.setForeground(Color.BLACK);
+        loginButton.setFont(new Font("Arial", Font.BOLD, 14));
+
+        registerButton.setBackground(new Color(0, 204, 0));
         registerButton.setForeground(Color.BLACK);
         registerButton.setFont(new Font("Arial", Font.BOLD, 14));
 
@@ -69,25 +82,47 @@ public class RegisterScreen extends JFrame {
         passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
     }
 
-    private void addRegisterAction() {
-        registerButton.addActionListener(new ActionListener() {
+    private void addLoginAction() {
+        loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
 
                 if (username.isEmpty() || password.isEmpty()) {
-                    ErrorDialog.showErrorDialog(RegisterScreen.this, "Username or password is missing!");
+                    ErrorDialog.showErrorDialog(LoginApp.this, "Username or password is missing!");
                     return;
                 }
 
-                if (loginController.register(username, password)) {
-                    SuccesDialog.showSuccesDialog(RegisterScreen.this, "Registration successful!");
+                if (loginController.login(username, password)) {
+                    SuccesDialog.showSuccesDialog(LoginApp.this, "Login successful!");
                     dispose();
+                    new MainMenu(carController).setVisible(true);
                 } else {
-                    ErrorDialog.showErrorDialog(RegisterScreen.this, "Username already exists!");
+                    ErrorDialog.showErrorDialog(LoginApp.this, "Invalid username or password!");
                 }
             }
+        });
+    }
+
+    private void addRegisterAction() {
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new RegisterScreen(loginController).setVisible(true);
+            }
+        });
+    }
+
+    public static void main(String[] args) {
+        LoginController loginController = new LoginController();
+        CarController carController = new CarController();
+
+        loginController.addUser(new models.User("george", utils.EncryptionUtil.hashPassword("parola")));
+
+        SwingUtilities.invokeLater(() -> {
+            LoginApp app = new LoginApp(loginController, carController);
+            app.setVisible(true);
         });
     }
 }

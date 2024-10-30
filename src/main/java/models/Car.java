@@ -1,18 +1,20 @@
 package models;
 
+import java.math.BigDecimal;
+
 public class Car {
     private int id;
     private String brand;
     private String model;
     private int year;
-    private double price;
+    private BigDecimal price;
     private String color;
     private int mileage;
     private boolean isAvailable;
 
     public Car() {}
 
-    public Car(int id, String brand, String model, int year, double price, String color, int mileage, boolean isAvailable) {
+    public Car(int id, String brand, String model, int year, BigDecimal price, String color, int mileage, boolean isAvailable) {
         this.id = id;
         this.brand = brand;
         this.model = model;
@@ -21,6 +23,14 @@ public class Car {
         this.color = color;
         this.mileage = mileage;
         this.isAvailable = isAvailable;
+    }
+
+    public Car(String brand, String model, int year, BigDecimal price) {
+        this.brand = brand;
+        this.model = model;
+        this.year = year;
+        this.price = price;
+        this.isAvailable = true;
     }
 
     public int getId() {
@@ -55,11 +65,11 @@ public class Car {
         this.year = year;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -89,6 +99,6 @@ public class Car {
 
     @Override
     public String toString() {
-        return brand + " " + model + " (" + year + "), $" + price;
+        return brand + " " + model + " (" + year + "), $" + price.toString();
     }
 }

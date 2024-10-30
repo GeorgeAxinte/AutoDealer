@@ -1,37 +1,37 @@
 package controllers;
 
 import models.User;
-import utils.EncryptionUtil;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginController {
-    private List<User> users;
-
-    public LoginController() {
-        this.users = new ArrayList<>();
-    }
+    private Map<String, User> users = new HashMap<>();
 
     public void addUser(User user) {
-        users.add(user);
+        users.put(user.getUsername(), user);
     }
 
     public boolean login(String username, String password) {
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-
-                return EncryptionUtil.checkPassword(password, user.getPassword());
-            }
+        User user = users.get(username);
+        if (user != null && user.getPassword().equals(utils.EncryptionUtil.hashPassword(password))) {
+            return true;
         }
         return false;
     }
 
-    public User findUserByUsername(String username) {
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                return user;
-            }
+    public boolean register(String username, String password) {
+        if (users.containsKey(username)) {
+            return false;
         }
-        return null;
+
+        User newUser = new User(username, utils.EncryptionUtil.hashPassword(password));
+        addUser(newUser);
+        return true;
+    }
+
+    public void listUsers() {
+        for (User user : users.values()) {
+            System.out.println(user.getUsername());
+        }
     }
 }

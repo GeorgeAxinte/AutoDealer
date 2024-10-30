@@ -1,43 +1,65 @@
 package controllers;
 
 import models.Car;
-import java.util.ArrayList;
-import java.util.List;
+import database.DatabaseConnection;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class CarController {
-    private List<Car> cars;
 
-    public CarController() {
-        this.cars = new ArrayList<>();
-    }
+    public boolean addCar(Car car, int userId) {
+        String sql = "INSERT INTO Cars (make, model, year, price, userId) VALUES (?, ?, ?, ?, ?)";
 
-    public void addCar(Car car) {
-        cars.add(car);
-        System.out.println("Car added: " + car);
-    }
-
-    public boolean removeCar(int id) {
-        for (Car car : cars) {
-            if (car.getId() == id) {
-                cars.remove(car);
-                System.out.println("Car removed: " + car);
-                return true;
-            }
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, car.getBrand());
+            statement.setString(2, car.getModel());
+            statement.setInt(3, car.getYear());
+            statement.setBigDecimal(4, car.getPrice());
+            statement.setInt(5, userId);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-        System.out.println("Car not found with ID: " + id);
+    }
+
+    public boolean deleteCar(int carId) {
+        String sql = "DELETE FROM Cars WHERE id = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, carId);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean sellCar(int carId, int buyerId) {
+        String sql = "UPDATE Cars SET userId = ? WHERE id = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, buyerId);
+            statement.setInt(2, carId);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean purchaseCar(int carId, int userId) {
+        return sellCar(carId, userId);
+    }
+
+    public boolean reserveCar(int carId) {
         return false;
-    }
-
-    public List<Car> getAllCars() {
-        return new ArrayList<>(cars);
-    }
-
-    public Car getCarById(int id) {
-        for (Car car : cars) {
-            if (car.getId() == id) {
-                return car;
-            }
-        }
-        return null;
     }
 }

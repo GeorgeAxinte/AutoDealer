@@ -11,7 +11,12 @@ public class User {
 
     public User() {}
 
-    public User(int id, String username, String password, String firstName, String lastName, String phoneNumber, String email, String userType) {
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public User(int id, String username, String password, String firstName, String lastName, String phoneNumber, String userType) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -76,6 +81,7 @@ public class User {
     public void setUserType(String userType) {
         this.userType = userType;
     }
+
 
     @Override
     public String toString() {

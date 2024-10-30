@@ -61,12 +61,16 @@ public class MainMenu extends JFrame {
         JTextField modelField = new JTextField();
         JTextField yearField = new JTextField();
         JTextField priceField = new JTextField();
+        JTextField colorField = new JTextField();
+        JTextField mileageField = new JTextField();
 
         Object[] message = {
                 "Make:", makeField,
                 "Model:", modelField,
                 "Year:", yearField,
-                "Price:", priceField
+                "Price:", priceField,
+                "Color:", colorField,
+                "Mileage:", mileageField
         };
 
         int option = JOptionPane.showConfirmDialog(this, message, "Add Car", JOptionPane.OK_CANCEL_OPTION);
@@ -76,8 +80,10 @@ public class MainMenu extends JFrame {
                 String model = modelField.getText();
                 int year = Integer.parseInt(yearField.getText());
                 BigDecimal price = new BigDecimal(priceField.getText());
+                String color = colorField.getText();
+                int mileage = Integer.parseInt(mileageField.getText());
 
-                Car car = new Car(make, model, year, price);
+                Car car = new Car(make, model, year, price, color, mileage);
                 if (carController.addCar(car, 1)) {
                     SuccesDialog.showSuccesDialog(this, "Car added successfully!");
                 } else {
@@ -88,6 +94,7 @@ public class MainMenu extends JFrame {
             }
         }
     }
+
 
     private void deleteCar() {
         String carId = JOptionPane.showInputDialog(this, "Enter Car ID to delete:");

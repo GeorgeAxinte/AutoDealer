@@ -11,26 +11,25 @@ public class DatabaseConnection {
     private static Connection connection = null;
 
     public static Connection getConnection() {
-        if (connection == null) {
-            try (InputStream input = DatabaseConnection.class.getClassLoader().getResourceAsStream("db.properties")) {
-                Properties properties = new Properties();
-                properties.load(input);
+        Connection conn = null;
+        try (InputStream input = DatabaseConnection.class.getClassLoader().getResourceAsStream("db.properties")) {
+            Properties properties = new Properties();
+            properties.load(input);
 
-                String url = properties.getProperty("db.url");
-                String username = properties.getProperty("db.username");
-                String password = properties.getProperty("db.password");
-                String driver = properties.getProperty("db.driver");
+            String url = properties.getProperty("db.url");
+            String username = properties.getProperty("db.username");
+            String password = properties.getProperty("db.password");
+            String driver = properties.getProperty("db.driver");
 
-                Class.forName(driver);
+            Class.forName(driver);
 
-                connection = DriverManager.getConnection(url, username, password);
-
-            } catch (IOException | ClassNotFoundException | SQLException e) {
-                e.printStackTrace();
-            }
+            conn = DriverManager.getConnection(url, username, password);
+        } catch (IOException | ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
         }
-        return connection;
+        return conn;
     }
+
 
     public static void closeConnection() {
         try {

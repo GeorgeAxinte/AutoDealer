@@ -100,9 +100,9 @@ public class LoginApp extends JFrame {
                     dispose();
                     String userType = loginController.getUserType(username);
                     if ("Dealer".equalsIgnoreCase(userType)) {
-                        new DealerDashboard(carController).setVisible(true);
+                        new DealerDashboard(carController, loginController).setVisible(true);
                     } else {
-                        new ClientDashboard(carController).setVisible(true);
+                        new ClientDashboard(carController, loginController).setVisible(true);
                     }
                 } else {
                     ErrorDialog.showErrorDialog(LoginApp.this, "Invalid username or password!");
@@ -123,7 +123,6 @@ public class LoginApp extends JFrame {
     public static void main(String[] args) {
         LoginController loginController = new LoginController();
         CarController carController = new CarController();
-
 
         loginController.addUser(new User(1, "george", utils.EncryptionUtil.hashPassword("parola"), "George", "Popescu", "0755345674", "Client"));
         loginController.addUser(new User(2, "dealer", utils.EncryptionUtil.hashPassword("parola1"), "Ion", "Ionescu", "0740672341", "Dealer"));

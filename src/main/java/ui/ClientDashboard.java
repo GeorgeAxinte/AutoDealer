@@ -1,6 +1,7 @@
 package ui;
 
 import controllers.CarController;
+import controllers.LoginController;
 import utils.ErrorDialog;
 import utils.SuccesDialog;
 
@@ -9,9 +10,11 @@ import java.awt.*;
 
 public class ClientDashboard extends JFrame {
     private CarController carController;
+    private LoginController loginController;
 
-    public ClientDashboard(CarController carController) {
+    public ClientDashboard(CarController carController, LoginController loginController) {
         this.carController = carController;
+        this.loginController = loginController;
 
         setTitle("Client Dashboard");
         setSize(400, 400);
@@ -42,6 +45,24 @@ public class ClientDashboard extends JFrame {
         JButton sellCarButton = new JButton("Sell Car");
         sellCarButton.addActionListener(e -> sellCar());
         buttonPanel.add(sellCarButton);
+
+        JButton viewCarsButton = new JButton("View Cars");
+        viewCarsButton.addActionListener(e -> viewCars());
+        buttonPanel.add(viewCarsButton);
+
+        JButton logOutButton = new JButton("Log Out");
+        logOutButton.addActionListener(e -> logOut());
+        buttonPanel.add(logOutButton);
+    }
+
+    private void viewCars() {
+        String cars = carController.getAllCarsAsString();
+        JOptionPane.showMessageDialog(this, cars, "Available Cars", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void logOut() {
+        dispose();
+        new LoginApp(loginController, carController).setVisible(true);
     }
 
     private void purchaseCar() {

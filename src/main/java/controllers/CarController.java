@@ -3,19 +3,18 @@ package controllers;
 import models.Car;
 import database.DatabaseConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CarController {
 
     public boolean addCar(Car car, int userId) {
-        String sql = "INSERT INTO Cars (make, model, year, price, userId) VALUES (?, ?, ?, ?, ?)";
-
+        String sql = "INSERT INTO Cars (make, model, year, price, userId, status) VALUES (?, ?, ?, ?, ?, 'available')";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, car.getBrand());
+            statement.setString(1, car.getMake());
             statement.setString(2, car.getModel());
             statement.setInt(3, car.getYear());
             statement.setBigDecimal(4, car.getPrice());
@@ -28,27 +27,68 @@ public class CarController {
         }
     }
 
+    public List<Car> getAllCars() {
+        List<Car> cars = new ArrayList<>();
+        Connection conn = null;
+
+        try {
+            conn = DatabaseConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM cars");
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String make = rs.getString("make");
+                String model = rs.getString("model");
+                int year = rs.getInt("year");
+                BigDecimal price = rs.getBigDecimal("price");
+                int mileage = rs.getInt("mileage");
+                boolean isAvailable = rs.getString("status").equalsIgnoreCase("available");
+
+                Car car = new Car(id, make, model, year, price, null, mileage, isAvailable, "available");
+                cars.add(car);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return cars;
+    }
+
+
+
+    public String getAllCarsAsString() {
+        List<Car> cars = getAllCars();
+        if (cars.isEmpty()) {
+            return "No cars available.";
+        }
+        StringBuilder stringBuilder = new StringBuilder("Available Cars:\n");
+        for (Car car : cars) {
+            stringBuilder.append(car.getId()).append(": ")
+                    .append(car.getMake()).append(" ")
+                    .append(car.getModel()).append(", ")
+                    .append(car.getYear()).append(", $")
+                    .append(car.getPrice()).append(" ")
+                    .append(car.getColor()).append(" ")
+                    .append(car.getMileage()).append(" ")
+                    .append(car.getStatus()).append("\n");
+        }
+        return stringBuilder.toString();
+    }
+
     public boolean deleteCar(int carId) {
         String sql = "DELETE FROM Cars WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, carId);
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public boolean sellCar(int carId, int buyerId) {
-        String sql = "UPDATE Cars SET userId = ? WHERE id = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, buyerId);
-            statement.setInt(2, carId);
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -56,10 +96,40 @@ public class CarController {
     }
 
     public boolean purchaseCar(int carId, int userId) {
-        return sellCar(carId, userId);
+        String sql = "UPDATE Cars SET status = 'sold', userId = ? WHERE id = ? AND status = 'available'";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, userId);
+            statement.setInt(2, carId);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean reserveCar(int carId) {
-        return false;
+        String sql = "UPDATE Cars SET status = 'reserved' WHERE id = ? AND status = 'available'";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, carId);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean sellCar(int carId, int buyerId) {
+        String sql = "UPDATE Cars SET status = 'sold', userId = ? WHERE id = ? AND status = 'reserved'";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, buyerId);
+            statement.setInt(2, carId);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

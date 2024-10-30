@@ -11,14 +11,16 @@ import java.util.List;
 public class CarController {
 
     public boolean addCar(Car car, int userId) {
-        String sql = "INSERT INTO Cars (make, model, year, price, userId, status) VALUES (?, ?, ?, ?, ?, 'available')";
+        String sql = "INSERT INTO Cars (make, model, year, price, color, mileage, userId, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'available')";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, car.getMake());
             statement.setString(2, car.getModel());
             statement.setInt(3, car.getYear());
             statement.setBigDecimal(4, car.getPrice());
-            statement.setInt(5, userId);
+            statement.setString(5, car.getColor());
+            statement.setInt(6, car.getMileage());
+            statement.setInt(7, userId);
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -43,9 +45,10 @@ public class CarController {
                 int year = rs.getInt("year");
                 BigDecimal price = rs.getBigDecimal("price");
                 int mileage = rs.getInt("mileage");
+                String color = rs.getString("color");
                 boolean isAvailable = rs.getString("status").equalsIgnoreCase("available");
 
-                Car car = new Car(id, make, model, year, price, null, mileage, isAvailable, "available");
+                Car car = new Car(id, make, model, year, price, color, mileage, isAvailable, "available");
                 cars.add(car);
             }
         } catch (SQLException e) {
@@ -64,6 +67,7 @@ public class CarController {
 
 
 
+
     public String getAllCarsAsString() {
         List<Car> cars = getAllCars();
         if (cars.isEmpty()) {
@@ -78,7 +82,8 @@ public class CarController {
                     .append(car.getPrice()).append(" ")
                     .append(car.getColor()).append(" ")
                     .append(car.getMileage()).append(" ")
-                    .append(car.getStatus()).append("\n");
+                    .append(car.getStatus() ? "available" : "sold")
+                    .append("\n");
         }
         return stringBuilder.toString();
     }

@@ -9,6 +9,7 @@ public class User {
     private String phoneNumber;
     private String userType;
 
+
     public User() {}
 
     public User(String username, String password) {

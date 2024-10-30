@@ -25,8 +25,14 @@ public class LoginController {
         }
 
         User newUser = new User(username, utils.EncryptionUtil.hashPassword(password));
+        newUser.setUserType("Client");
         addUser(newUser);
         return true;
+    }
+
+    public String getUserType(String username) {
+        User user = users.get(username);
+        return user != null ? user.getUserType() : null;
     }
 
     public void listUsers() {

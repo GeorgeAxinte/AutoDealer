@@ -9,7 +9,7 @@ public class ErrorDialog {
         dialog.setSize(300, 150);
         dialog.setLayout(new GridBagLayout());
         dialog.setLocationRelativeTo(parent);
-        dialog.getContentPane().setBackground(new Color(255, 204, 204));
+        dialog.getContentPane().setBackground(new Color(187, 187, 187));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);

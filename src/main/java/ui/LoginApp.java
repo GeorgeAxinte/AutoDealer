@@ -9,6 +9,7 @@ import controllers.LoginController;
 import controllers.CarController;
 import utils.ErrorDialog;
 import utils.SuccesDialog;
+import models.User;
 
 public class LoginApp extends JFrame {
     private JTextField usernameField;
@@ -97,7 +98,12 @@ public class LoginApp extends JFrame {
                 if (loginController.login(username, password)) {
                     SuccesDialog.showSuccesDialog(LoginApp.this, "Login successful!");
                     dispose();
-                    new MainMenu(carController).setVisible(true);
+                    String userType = loginController.getUserType(username);
+                    if ("Dealer".equalsIgnoreCase(userType)) {
+                        new DealerDashboard(carController).setVisible(true);
+                    } else {
+                        new ClientDashboard(carController).setVisible(true);
+                    }
                 } else {
                     ErrorDialog.showErrorDialog(LoginApp.this, "Invalid username or password!");
                 }
@@ -118,7 +124,9 @@ public class LoginApp extends JFrame {
         LoginController loginController = new LoginController();
         CarController carController = new CarController();
 
-        loginController.addUser(new models.User("george", utils.EncryptionUtil.hashPassword("parola")));
+
+        loginController.addUser(new User(1, "george", utils.EncryptionUtil.hashPassword("parola"), "George", "Popescu", "0755345674", "Client"));
+        loginController.addUser(new User(2, "dealer", utils.EncryptionUtil.hashPassword("parola1"), "Ion", "Ionescu", "0740672341", "Dealer"));
 
         SwingUtilities.invokeLater(() -> {
             LoginApp app = new LoginApp(loginController, carController);

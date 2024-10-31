@@ -1,43 +1,72 @@
 package controllers;
 
+import database.DatabaseConnection;
 import models.User;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import utils.EncryptionUtil;
 
 public class LoginController {
-    private Map<String, User> users = new HashMap<>();
+    private List<User> users;
 
-    public void addUser(User user) {
-        users.put(user.getUsername(), user);
+    public LoginController() {
+        users = new ArrayList<>();
     }
 
-    public boolean login(String username, String password) {
-        User user = users.get(username);
-        if (user != null && user.getPassword().equals(utils.EncryptionUtil.hashPassword(password))) {
-            return true;
+    public boolean register(String username, String password) {
+        if (username != null && password != null && !userExists(username)) {
+            try (Connection connection = DatabaseConnection.getConnection()) {
+                String query = "INSERT INTO users (username, password) VALUES (?, ?)";
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2,
+                        EncryptionUtil.hashPassword(password));
+                preparedStatement.executeUpdate();
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }
 
-    public boolean register(String username, String password) {
-        if (users.containsKey(username)) {
-            return false;
+    private boolean userExists(String username) {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String query = "SELECT COUNT(*) FROM users WHERE username = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        User newUser = new User(username, utils.EncryptionUtil.hashPassword(password));
-        newUser.setUserType("Client");
-        addUser(newUser);
-        return true;
+        return false;
     }
 
-    public String getUserType(String username) {
-        User user = users.get(username);
-        return user != null ? user.getUserType() : null;
-    }
+    public int login(String username, String password) {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String query = "SELECT id, password FROM users WHERE username = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, username);
 
-    public void listUsers() {
-        for (User user : users.values()) {
-            System.out.println(user.getUsername());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                String hashedPassword = resultSet.getString("password");
+                int userId = resultSet.getInt("id");
+
+                if (EncryptionUtil.checkPassword(password, hashedPassword)) {
+                    return userId;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return -1;
     }
 }

@@ -7,8 +7,6 @@ import utils.SuccesDialog;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 
 public class MainMenu extends JFrame {
@@ -95,12 +93,11 @@ public class MainMenu extends JFrame {
         }
     }
 
-
     private void deleteCar() {
-        String carId = JOptionPane.showInputDialog(this, "Enter Car ID to delete:");
-        if (carId != null) {
+        String carIdStr = JOptionPane.showInputDialog(this, "Enter Car ID to delete:");
+        if (carIdStr != null) {
             try {
-                int id = Integer.parseInt(carId);
+                int id = Integer.parseInt(carIdStr);
                 if (carController.deleteCar(id)) {
                     SuccesDialog.showSuccesDialog(this, "Car deleted successfully!");
                 } else {
@@ -113,13 +110,13 @@ public class MainMenu extends JFrame {
     }
 
     private void sellCar() {
-        String carId = JOptionPane.showInputDialog(this, "Enter Car ID to sell:");
-        String userId = JOptionPane.showInputDialog(this, "Enter Buyer User ID:");
-        if (carId != null && userId != null) {
+        String carIdStr = JOptionPane.showInputDialog(this, "Enter Car ID to sell:");
+        String userIdStr = JOptionPane.showInputDialog(this, "Enter Buyer User ID:");
+        if (carIdStr != null && userIdStr != null) {
             try {
-                int id = Integer.parseInt(carId);
-                int buyerId = Integer.parseInt(userId);
-                if (carController.sellCar(id, buyerId)) {
+                int carId = Integer.parseInt(carIdStr);
+                int buyerId = Integer.parseInt(userIdStr);
+                if (carController.sellCar(carId, buyerId)) {
                     SuccesDialog.showSuccesDialog(this, "Car sold successfully!");
                 } else {
                     ErrorDialog.showErrorDialog(this, "Failed to sell car. It may not exist or be already sold.");
@@ -131,13 +128,13 @@ public class MainMenu extends JFrame {
     }
 
     private void purchaseCar() {
-        String carId = JOptionPane.showInputDialog(this, "Enter Car ID to purchase:");
-        String buyerId = JOptionPane.showInputDialog(this, "Enter Your User ID:");
-        if (carId != null && buyerId != null) {
+        String carIdStr = JOptionPane.showInputDialog(this, "Enter Car ID to purchase:");
+        String buyerIdStr = JOptionPane.showInputDialog(this, "Enter Your User ID:");
+        if (carIdStr != null && buyerIdStr != null) {
             try {
-                int id = Integer.parseInt(carId);
-                int userId = Integer.parseInt(buyerId);
-                if (carController.purchaseCar(id, userId)) {
+                int carId = Integer.parseInt(carIdStr);
+                int userId = Integer.parseInt(buyerIdStr);
+                if (carController.purchaseCar(carId, userId)) {
                     SuccesDialog.showSuccesDialog(this, "Car purchased successfully!");
                 } else {
                     ErrorDialog.showErrorDialog(this, "Failed to purchase car. It may not be available.");
@@ -149,10 +146,10 @@ public class MainMenu extends JFrame {
     }
 
     private void reserveCar() {
-        String carId = JOptionPane.showInputDialog(this, "Enter Car ID to reserve:");
-        if (carId != null) {
+        String carIdStr = JOptionPane.showInputDialog(this, "Enter Car ID to reserve:");
+        if (carIdStr != null) {
             try {
-                int id = Integer.parseInt(carId);
+                int id = Integer.parseInt(carIdStr);
                 if (carController.reserveCar(id)) {
                     SuccesDialog.showSuccesDialog(this, "Car reserved successfully!");
                 } else {

@@ -81,12 +81,13 @@ public class CarController {
                     .append(car.getYear()).append(", $")
                     .append(car.getPrice()).append(" ")
                     .append(car.getColor()).append(" ")
-                    .append(car.getMileage()).append(" ")
+                    .append(car.getMileage()).append(" km ")
                     .append(car.getStatus() ? "available" : "sold")
                     .append("\n");
         }
         return stringBuilder.toString();
     }
+
 
     public boolean deleteCar(int carId) {
         String sql = "DELETE FROM Cars WHERE id = ?";
@@ -125,13 +126,15 @@ public class CarController {
         }
     }
 
-    public boolean sellCar(int carId, int buyerId) {
-        String sql = "UPDATE Cars SET status = 'sold', userId = ? WHERE id = ? AND status = 'reserved'";
+    public boolean sellCar(int carId, int userId) {
+        String sql = "UPDATE Cars SET status = 'available' WHERE id = ? AND userId = ?";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, buyerId);
-            statement.setInt(2, carId);
-            return statement.executeUpdate() > 0;
+            statement.setInt(1,
+                    carId);
+            statement.setInt(2, userId);
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated == 1;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

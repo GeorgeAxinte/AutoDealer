@@ -11,10 +11,12 @@ import java.awt.*;
 public class ClientDashboard extends JFrame {
     private CarController carController;
     private LoginController loginController;
+    private int userId;
 
-    public ClientDashboard(CarController carController, LoginController loginController) {
+    public ClientDashboard(CarController carController, LoginController loginController, int userId) {
         this.carController = carController;
         this.loginController = loginController;
+        this.userId = userId;
 
         setTitle("Client Dashboard");
         setSize(400, 400);
@@ -67,21 +69,20 @@ public class ClientDashboard extends JFrame {
 
     private void purchaseCar() {
         String carId = JOptionPane.showInputDialog(this, "Enter Car ID to purchase:");
-        String userId = JOptionPane.showInputDialog(this, "Enter Your User ID:");
-        if (carId != null && userId != null) {
+        if (carId != null) {
             try {
                 int id = Integer.parseInt(carId);
-                int userIdInt = Integer.parseInt(userId);
-                if (carController.purchaseCar(id, userIdInt)) {
+                if (carController.purchaseCar(id, userId)) {
                     SuccesDialog.showSuccesDialog(this, "Car purchased successfully!");
                 } else {
                     ErrorDialog.showErrorDialog(this, "Failed to purchase car. It may not be available.");
                 }
             } catch (NumberFormatException e) {
-                ErrorDialog.showErrorDialog(this, "Please enter valid IDs.");
+                ErrorDialog.showErrorDialog(this, "Please enter a valid car ID.");
             }
         }
     }
+
 
     private void reserveCar() {
         String carId = JOptionPane.showInputDialog(this, "Enter Car ID to reserve:");
@@ -100,20 +101,21 @@ public class ClientDashboard extends JFrame {
     }
 
     private void sellCar() {
-        String carId = JOptionPane.showInputDialog(this, "Enter Car ID to sell:");
-        String userId = JOptionPane.showInputDialog(this, "Enter Buyer User ID:");
-        if (carId != null && userId != null) {
+        String carIdStr = JOptionPane.showInputDialog(this, "Enter Car ID to sell:");
+        if (carIdStr != null) {
             try {
-                int id = Integer.parseInt(carId);
-                int buyerId = Integer.parseInt(userId);
-                if (carController.sellCar(id, buyerId)) {
+                int carId = Integer.parseInt(carIdStr);
+
+                if (carController.sellCar(carId, userId)) {
                     SuccesDialog.showSuccesDialog(this, "Car sold successfully!");
                 } else {
-                    ErrorDialog.showErrorDialog(this, "Failed to sell car. It may not exist or be already sold.");
+                    ErrorDialog.showErrorDialog(this, "Failed to sell car. You may not be the owner or the car may not exist.");
                 }
             } catch (NumberFormatException e) {
-                ErrorDialog.showErrorDialog(this, "Please enter valid IDs.");
+                ErrorDialog.showErrorDialog(this, "Please enter a valid car ID.");
             }
         }
     }
+
+
 }

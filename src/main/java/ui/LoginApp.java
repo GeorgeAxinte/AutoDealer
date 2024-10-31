@@ -95,14 +95,14 @@ public class LoginApp extends JFrame {
                     return;
                 }
 
-                if (loginController.login(username, password)) {
+                int userId = loginController.login(username, password);
+                if (userId != -1) {
                     SuccesDialog.showSuccesDialog(LoginApp.this, "Login successful!");
                     dispose();
-                    String userType = loginController.getUserType(username);
-                    if ("Dealer".equalsIgnoreCase(userType)) {
+                    if (userId == 1) {
                         new DealerDashboard(carController, loginController).setVisible(true);
                     } else {
-                        new ClientDashboard(carController, loginController).setVisible(true);
+                        new ClientDashboard(carController, loginController, userId).setVisible(true);
                     }
                 } else {
                     ErrorDialog.showErrorDialog(LoginApp.this, "Invalid username or password!");
@@ -110,6 +110,7 @@ public class LoginApp extends JFrame {
             }
         });
     }
+
 
     private void addRegisterAction() {
         registerButton.addActionListener(new ActionListener() {
@@ -124,8 +125,6 @@ public class LoginApp extends JFrame {
         LoginController loginController = new LoginController();
         CarController carController = new CarController();
 
-        loginController.addUser(new User(1, "george", utils.EncryptionUtil.hashPassword("parola"), "George", "Popescu", "0755345674", "Client"));
-        loginController.addUser(new User(2, "dealer", utils.EncryptionUtil.hashPassword("parola1"), "Ion", "Ionescu", "0740672341", "Dealer"));
 
         SwingUtilities.invokeLater(() -> {
             LoginApp app = new LoginApp(loginController, carController);

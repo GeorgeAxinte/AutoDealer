@@ -10,10 +10,10 @@ public class Car {
     private BigDecimal price;
     private String color;
     private int mileage;
-    private boolean status;
+    private String status;
     private String additionalInfo;
 
-    public Car(int id, String make, String model, int year, BigDecimal price, String color, int mileage, boolean status, String additionalInfo) {
+    public Car(int id, String make, String model, int year, BigDecimal price, String color, int mileage, String status, String additionalInfo) {
         this.id = id;
         this.make = make;
         this.model = model;
@@ -32,15 +32,15 @@ public class Car {
         this.price = price;
         this.color = color;
         this.mileage = mileage;
-        this.status = true;
+        this.status = "available";
         this.additionalInfo = "";
     }
 
-    public boolean getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

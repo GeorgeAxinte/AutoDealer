@@ -16,6 +16,10 @@ public class LoginController {
         users = new ArrayList<>();
     }
 
+
+
+
+
     public boolean register(String username, String password) {
         if (username != null && password != null && !userExists(username)) {
             try (Connection connection = DatabaseConnection.getConnection()) {

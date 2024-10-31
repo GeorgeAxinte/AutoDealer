@@ -6,7 +6,7 @@ import java.awt.*;
 public class ErrorDialog {
     public static void showErrorDialog(Component parent, String message) {
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(parent), "Eroare", true);
-        dialog.setSize(300, 150);
+        dialog.setSize(500, 150);
         dialog.setLayout(new GridBagLayout());
         dialog.setLocationRelativeTo(parent);
         dialog.getContentPane().setBackground(new Color(187, 187, 187));

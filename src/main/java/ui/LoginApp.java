@@ -30,6 +30,9 @@ public class LoginApp extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setBackground(new Color(187, 187, 187));
 
+        ImageIcon icon = new ImageIcon("C:\\Program Files (x86)\\AutoDealer\\src\\cariconrosu.png");
+        setIconImage(icon.getImage());
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -111,7 +114,6 @@ public class LoginApp extends JFrame {
         });
     }
 
-
     private void addRegisterAction() {
         registerButton.addActionListener(new ActionListener() {
             @Override
@@ -124,7 +126,6 @@ public class LoginApp extends JFrame {
     public static void main(String[] args) {
         LoginController loginController = new LoginController();
         CarController carController = new CarController();
-
 
         SwingUtilities.invokeLater(() -> {
             LoginApp app = new LoginApp(loginController, carController);

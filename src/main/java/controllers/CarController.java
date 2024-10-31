@@ -7,6 +7,8 @@ import java.sql.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
+import java.awt.*;
 
 public class CarController {
 
@@ -29,14 +31,13 @@ public class CarController {
         }
     }
 
+
+
     public List<Car> getAllCars() {
         List<Car> cars = new ArrayList<>();
-        Connection conn = null;
-
-        try {
-            conn = DatabaseConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM cars");
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM cars")) {
 
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -46,48 +47,37 @@ public class CarController {
                 BigDecimal price = rs.getBigDecimal("price");
                 int mileage = rs.getInt("mileage");
                 String color = rs.getString("color");
-                boolean isAvailable = rs.getString("status").equalsIgnoreCase("available");
+                String status = rs.getString("status");
 
-                Car car = new Car(id, make, model, year, price, color, mileage, isAvailable, "available");
+                Car car = new Car(id, make, model, year, price, color, mileage, status, "");
                 cars.add(car);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         return cars;
     }
 
-
-
-
     public String getAllCarsAsString() {
         List<Car> cars = getAllCars();
+
         if (cars.isEmpty()) {
             return "No cars available.";
         }
-        StringBuilder stringBuilder = new StringBuilder("Available Cars:\n");
+
+        StringBuilder stringBuilder = new StringBuilder("Available Cars:\n\n");
         for (Car car : cars) {
-            stringBuilder.append(car.getId()).append(": ")
-                    .append(car.getMake()).append(" ")
-                    .append(car.getModel()).append(", ")
-                    .append(car.getYear()).append(", $")
-                    .append(car.getPrice()).append(" ")
-                    .append(car.getColor()).append(" ")
-                    .append(car.getMileage()).append(" km ")
-                    .append(car.getStatus() ? "available" : "sold")
-                    .append("\n");
+            stringBuilder.append("ID: ").append(car.getId())
+                    .append(" | ").append(car.getMake()).append(" ")
+                    .append(car.getModel()).append(" | Year: ")
+                    .append(car.getYear()).append(" | Price: $")
+                    .append(car.getPrice()).append(" | Color: ")
+                    .append(car.getColor()).append(" | Mileage: ")
+                    .append(car.getMileage()).append(" km | Status: ")
+                    .append(car.getStatus()).append("\n");
         }
         return stringBuilder.toString();
     }
-
 
     public boolean deleteCar(int carId) {
         String sql = "DELETE FROM Cars WHERE id = ?";
@@ -130,11 +120,9 @@ public class CarController {
         String sql = "UPDATE Cars SET status = 'available' WHERE id = ? AND userId = ?";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1,
-                    carId);
+            statement.setInt(1, carId);
             statement.setInt(2, userId);
-            int rowsUpdated = statement.executeUpdate();
-            return rowsUpdated == 1;
+            return statement.executeUpdate() == 1;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
